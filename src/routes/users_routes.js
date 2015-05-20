@@ -1,5 +1,6 @@
 import * as UsersController from '../controllers/Users.js'
 import * as AuthController from '../controllers/Auth.js'
+import {AUTH_TYPE} from '../config.js'
 
 var Boom = require('boom')
 var Joi = require('joi')
@@ -43,36 +44,8 @@ export default [
                     email: Joi.string().required()
                 }
             },
-            description: 'Test',
+            description: 'Returns token when the user is successfully created!',
             tags: ['api']
         }
-    },
-    {
-        method: "GET",
-        path: "/users",
-        handler: function*(req,reply) {
-            reply({test: AuthController.generateToken("TETETE")});
-        },
-        config: {
-            validate: {
-
-            },
-            auth: false
-        }
-    },
-
-    {
-        method: "GET",
-        path: "/users2",
-        handler: function*(req,reply) {
-            reply({test: "test"});
-        },
-        config: {
-            validate: {
-
-            },
-            auth: 'jwt'
-        }
-    },
-
+    }
 ]

@@ -16,12 +16,6 @@ var UsersController = _interopRequireWildcard(_UsersJs);
 var Co = require('co');
 
 var jwt = require('jsonwebtoken');
-var people = { // our "users database"
-    1: {
-        id: 1,
-        name: 'Jen Jones'
-    }
-};
 
 var validate = function validate(decoded, request, callback) {
     Co(function* () {

@@ -5,3 +5,5 @@ Object.defineProperty(exports, "__esModule", {
 });
 var PRIVATE_KEY = "HearMyThoughts!#Private";
 exports.PRIVATE_KEY = PRIVATE_KEY;
+var AUTH_TYPE = "jwt";
+exports.AUTH_TYPE = AUTH_TYPE;

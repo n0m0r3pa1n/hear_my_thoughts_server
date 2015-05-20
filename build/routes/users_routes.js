@@ -14,6 +14,8 @@ var _controllersAuthJs = require('../controllers/Auth.js');
 
 var AuthController = _interopRequireWildcard(_controllersAuthJs);
 
+var _configJs = require('../config.js');
+
 var Boom = require('boom');
 var Joi = require('joi');
 
@@ -54,28 +56,8 @@ exports['default'] = [{
                 email: Joi.string().required()
             }
         },
-        description: 'Test',
+        description: 'Returns token when the user is successfully created!',
         tags: ['api']
-    }
-}, {
-    method: 'GET',
-    path: '/users',
-    handler: function* handler(req, reply) {
-        reply({ test: AuthController.generateToken('TETETE') });
-    },
-    config: {
-        validate: {},
-        auth: false
-    }
-}, {
-    method: 'GET',
-    path: '/users2',
-    handler: function* handler(req, reply) {
-        reply({ test: 'test' });
-    },
-    config: {
-        validate: {},
-        auth: 'jwt'
     }
 }];
 module.exports = exports['default'];
