@@ -1,0 +1,36 @@
+{
+  "name": "apphunt",
+  "version": "0.0.0",
+  "description": "Example app",
+  "main": "build/index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel": "5.4.3",
+    "boom": "2.7.1",
+    "co": "^4.5.4",
+    "hapi": "^8.4.0",
+    "hapi-auth-jwt2": "^4.3.2",
+    "hapi-swagger": "^0.7.3",
+    "joi": "^6.4.1",
+    "jsonwebtoken": "^5.0.1",
+    "lodash": "~3.9.1",
+    "mongoose": "4.0.3",
+    "mongoose-deep-populate": "^1.1.0",
+    "mongoose-timestamp": "^0.4.0"
+  },
+  "devDependencies": {
+    "gulp": "3.8.11",
+    "gulp-babel": "5.1.0",
+    "gulp-concat": "2.5.2",
+    "gulp-sourcemaps": "1.5.2",
+    "gulp-util": "3.0.4",
+    "require-dir": "0.3.0"
+  },
+  "scripts": {
+    "start": "nodemon --harmony -w ./build"
+  },
+  "engines": {
+    "node": "0.12.x"
+  }
+}
