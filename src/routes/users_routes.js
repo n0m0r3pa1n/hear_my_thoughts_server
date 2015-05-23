@@ -37,7 +37,7 @@ export default [
             if (user != null && user != undefined) {
                 reply(AuthController.getToken(user.id))
             }
-            reply({})
+            reply(Boom.notFound("User not found!"))
         },
         config: {
             validate: {
