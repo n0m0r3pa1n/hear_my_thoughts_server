@@ -10,6 +10,10 @@ var _controllersUsersJs = require('../controllers/Users.js');
 
 var UsersController = _interopRequireWildcard(_controllersUsersJs);
 
+var _controllersSessionsJs = require('../controllers/Sessions.js');
+
+var SessionsController = _interopRequireWildcard(_controllersSessionsJs);
+
 var _controllersAuthJs = require('../controllers/Auth.js');
 
 var AuthController = _interopRequireWildcard(_controllersAuthJs);
@@ -28,14 +32,14 @@ exports['default'] = [{
             reply(Boom.notFound('User not found!'));
         }
 
-        reply(user);
+        reply(AuthController.getToken(user.id));
     },
     config: {
         validate: {
             params: {
                 email: Joi.string().required()
-            }
-        },
+            } },
+        auth: false,
         description: 'Test',
         tags: ['api']
     }
@@ -43,20 +47,32 @@ exports['default'] = [{
     method: 'POST',
     path: '/users',
     handler: function* handler(req, reply) {
-        var user = yield UsersController.add(req.payload.email, req.payload.name);
+        var user = yield UsersController.create(req.payload.email, req.payload.name);
         if (user != null && user != undefined) {
-            reply({ token: AuthController.generateToken(user.id) });
+            reply(AuthController.getToken(user.id));
         }
         reply({});
     },
     config: {
         validate: {
-            params: {
-                name: Joi.string(),
-                email: Joi.string().required()
+            payload: {
+                name: Joi.string().required(),
+                email: Joi.string().email().required()
             }
         },
+        auth: false,
         description: 'Returns token when the user is successfully created!',
+        tags: ['api']
+    }
+}, {
+    method: 'GET',
+    path: '/user/sessions',
+    handler: function* handler(req, reply) {
+        var sessions = yield SessionsController.getSessionsForUser(req.auth.credentials._id);
+        reply({ sessions: sessions });
+    },
+    config: {
+        description: 'Test',
         tags: ['api']
     }
 }];

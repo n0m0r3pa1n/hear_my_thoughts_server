@@ -26,7 +26,7 @@ var DevelopersController = (function () {
             return devs;
         }
     }, {
-        key: "add",
+        key: "create",
         value: function add() {
             var dev = new Developer({ email: "Test123" });
             dev.save();

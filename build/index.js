@@ -38,6 +38,36 @@ server.connection({
     }
 });
 
+server.connection({
+    port: 8081,
+    labels: ['chat']
+});
+
+server.connection({
+    port: 8082,
+    labels: ['stream']
+});
+
+var io = require('socket.io')(server.select('chat').listener);
+io.on('connection', function (socket) {
+
+    socket.emit('Oh hii!');
+
+    socket.on('burp', function () {
+        socket.emit('Excuse you!');
+    });
+});
+
+var io2 = require('socket.io')(server.select('stream').listener);
+io2.on('connection', function (socket) {
+
+    socket.emit('Oh hii2!');
+
+    socket.on('burp', function () {
+        socket.emit('Excuse you2!');
+    });
+});
+
 server.register({
     register: require('hapi-swagger'),
     options: swaggerOptions

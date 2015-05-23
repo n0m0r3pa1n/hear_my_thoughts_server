@@ -10,11 +10,15 @@ Mongoose.plugin(function (schema) {
 
     schema.statics.findOneOrCreate = function findOneOrCreate(condition, doc) {
         var wrapper = Co.wrap(function* (self, condition, doc) {
-            var foundDoc = yield self.findOne(condition).exec();
-            if (foundDoc) {
-                return foundDoc;
-            } else {
-                return yield self.create(doc);
+            try {
+                var foundDoc = yield self.findOne(condition).exec();
+                if (foundDoc) {
+                    return foundDoc;
+                } else {
+                    return yield self.create(doc);
+                }
+            } catch (e) {
+                console.log(e);
             }
         });
 
@@ -30,6 +34,7 @@ var userSchema = new Schema({
 });
 
 var sessionSchema = new Schema({
+    shortId: { type: String, unique: true },
     name: String,
     lecturer: { type: Schema.Types.ObjectId, ref: 'User' },
     participants: [{ type: Schema.Types.ObjectId, ref: 'User' }],
