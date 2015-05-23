@@ -2,7 +2,7 @@ var Session = require('../models').Session
 var ShortId = require('shortid')
 
 export function* getSessionsForUser(userId) {
-    return yield Session.find({$or: [{lecturer: userId}, {participants: userId}]}).exec()
+    return yield Session.find({$or: [{lecturer: userId}, {participants: userId}]}).populate('participants stream chat').exec()
 }
 
 export function* create(lecturerId, name) {
@@ -18,10 +18,10 @@ export function* create(lecturerId, name) {
 }
 
 export function* find(shortId) {
-    return yield Session.findOne({shortId: shortId}).exec();
+    return yield Session.findOne({shortId: shortId}).populate('participants stream').exec();
 }
 
-export function join(session, userId) {
+export function join(session, user) {
     let participants = session.participants;
     if(participants === undefined || participants === null) {
         participants = [];
@@ -29,12 +29,12 @@ export function join(session, userId) {
 
     let size = participants.length;
     for(let i=0; i < size; i++) {
-        if(String(participants[i]) === String(userId)) {
+        if(String(participants[i]._id) === String(user._id)) {
             return;
         }
     }
 
-    participants.push(userId);
+    participants.push(user);
     session.save(function(result, error) {
     });
 }
@@ -47,7 +47,7 @@ export function leave(session, userId) {
 
     let size = participants.length;
     for(let i=0; i < size; i++) {
-        if(String(participants[i]) === String(userId)) {
+        if(String(participants[i]._id) === String(userId)) {
             participants.splice(i, 1);
             return;
         }

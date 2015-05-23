@@ -13,7 +13,7 @@ var Session = require('../models').Session;
 var ShortId = require('shortid');
 
 function* getSessionsForUser(userId) {
-    return yield Session.find({ $or: [{ lecturer: userId }, { participants: userId }] }).exec();
+    return yield Session.find({ $or: [{ lecturer: userId }, { participants: userId }] }).populate('participants stream chat').exec();
 }
 
 function* create(lecturerId, name) {
@@ -29,10 +29,10 @@ function* create(lecturerId, name) {
 }
 
 function* find(shortId) {
-    return yield Session.findOne({ shortId: shortId }).exec();
+    return yield Session.findOne({ shortId: shortId }).populate('participants stream').exec();
 }
 
-function join(session, userId) {
+function join(session, user) {
     var participants = session.participants;
     if (participants === undefined || participants === null) {
         participants = [];
@@ -40,12 +40,12 @@ function join(session, userId) {
 
     var size = participants.length;
     for (var i = 0; i < size; i++) {
-        if (String(participants[i]) === String(userId)) {
+        if (String(participants[i]._id) === String(user._id)) {
             return;
         }
     }
 
-    participants.push(userId);
+    participants.push(user);
     session.save(function (result, error) {});
 }
 
@@ -57,7 +57,7 @@ function leave(session, userId) {
 
     var size = participants.length;
     for (var i = 0; i < size; i++) {
-        if (String(participants[i]) === String(userId)) {
+        if (String(participants[i]._id) === String(userId)) {
             participants.splice(i, 1);
             return;
         }

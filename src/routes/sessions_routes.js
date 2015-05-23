@@ -12,7 +12,7 @@ export default [
             if(session == null) {
                 reply(Boom.notFound("Wrong session code!"));
             }
-            SessionsController.join(session, req.auth.credentials._id);
+            SessionsController.join(session, req.auth.credentials);
             reply(session)
         },
         config: {
