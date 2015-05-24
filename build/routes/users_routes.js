@@ -49,7 +49,11 @@ exports['default'] = [{
     handler: function* handler(req, reply) {
         var user = yield UsersController.create(req.payload.email, req.payload.name);
         if (user != null && user != undefined) {
-            reply(AuthController.getToken(user.id));
+            reply({
+                token: AuthController.generateToken(user.id),
+                name: user.name,
+                email: user.email
+            });
         }
         reply(Boom.notFound('User not found!'));
     },
