@@ -34,7 +34,7 @@ export function setup(server) {
                 numUsers: numUsers
             });
 
-            socket.emit('user joined', {
+            socket.broadcast.emit('user joined', {
                 user: socket.user,
                 numUsers: numUsers
             });
@@ -47,7 +47,7 @@ export function setup(server) {
                 --numUsers;
 
                 // echo globally that this client has left
-                socket.emit('user left', {
+                socket.broadcast.emit('user left', {
                     user: socket.user,
                     numUsers: numUsers
                 });
