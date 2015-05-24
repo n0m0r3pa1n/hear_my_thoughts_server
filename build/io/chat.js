@@ -14,7 +14,7 @@ function setup(server) {
         labels: ['chat']
     });
 
-    var usernames = {};
+    var users = {};
     var numUsers = 0;
 
     var io = require('socket.io')(server.select('chat').listener);
@@ -24,17 +24,17 @@ function setup(server) {
         socket.on('new message', function (data, room) {
             io.to(room).emit('new message', {
                 message: data,
-                username: socket.username
+                user: socket.user
             });
         });
 
-        socket.on('add user', function (username, room) {
+        socket.on('add user', function (user, room) {
             // we store the username in the socket session for this client
             socket.join(room);
-            socket.username = username;
+            socket.user = user;
             socket.room = room;
             // add the client's username to the global list
-            usernames[username] = username;
+            users[user] = user;
             ++numUsers;
             addedUser = true;
             socket.emit('login', {
@@ -42,7 +42,7 @@ function setup(server) {
             });
 
             socket.emit('user joined', {
-                username: socket.username,
+                user: socket.user,
                 numUsers: numUsers
             });
         });
@@ -50,12 +50,12 @@ function setup(server) {
         socket.on('disconnect', function () {
             // remove the username from global usernames list
             if (addedUser) {
-                delete usernames[socket.username];
+                delete users[socket.user];
                 --numUsers;
 
                 // echo globally that this client has left
                 socket.emit('user left', {
-                    username: socket.username,
+                    user: socket.user,
                     numUsers: numUsers
                 });
             }
