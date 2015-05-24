@@ -18,7 +18,7 @@ exports['default'] = [{
     path: '/sessions/{shortId}/actions/join',
     handler: function* handler(req, reply) {
         var session = yield SessionsController.find(req.params.shortId);
-        if (session == null) {
+        if (session === null) {
             reply(Boom.notFound('Wrong session code!'));
         }
         SessionsController.join(session, req.auth.credentials);

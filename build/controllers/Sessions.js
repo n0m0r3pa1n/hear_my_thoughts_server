@@ -46,7 +46,9 @@ function join(session, user) {
     }
 
     participants.push(user);
-    session.save(function (result, error) {});
+    session.save(function (error, result) {
+        console.log(error);
+    });
 }
 
 function leave(session, userId) {
@@ -70,7 +72,7 @@ function* getUniqueShortId() {
     var shortId = ShortId.generate();
     var session = yield Session.findOne({ shortId: shortId }).exec();
     var isDuplicate = session != null;
-    if (isDuplicate) {
+    if (isDuplicate !== false) {
         shortId = yield getUniqueShortId();
     }
 

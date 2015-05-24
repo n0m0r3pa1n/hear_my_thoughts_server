@@ -13,7 +13,7 @@ export function* create(lecturerId, name) {
         shortId: shortId
     })
 
-    yield session.save()
+    yield session.save();
     return session;
 }
 
@@ -35,7 +35,8 @@ export function join(session, user) {
     }
 
     participants.push(user);
-    session.save(function(result, error) {
+    session.save(function(error, result) {
+        console.log(error)
     });
 }
 
@@ -61,7 +62,7 @@ function* getUniqueShortId() {
     let shortId = ShortId.generate();
     let session = yield Session.findOne({shortId: shortId}).exec();
     let isDuplicate = session != null
-    if(isDuplicate) {
+    if(isDuplicate !== false) {
         shortId = yield getUniqueShortId();
     }
 
