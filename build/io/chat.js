@@ -53,7 +53,8 @@ function setup(server) {
                 delete users[socket.user];
                 --numUsers;
 
-                // echo globally that this client has left
+                //difference between broadcast and without is that the event
+                //will not be broadcasted to the current socket if you use it
                 socket.broadcast.emit('user left', {
                     user: socket.user,
                     numUsers: numUsers
