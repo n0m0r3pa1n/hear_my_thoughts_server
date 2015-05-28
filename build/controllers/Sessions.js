@@ -13,7 +13,7 @@ var Session = require('../models').Session;
 var ShortId = require('shortid');
 
 function* getSessionsForUser(userId) {
-    return yield Session.find({ $or: [{ lecturer: userId }, { participants: userId }] }).populate('participants stream chat').exec();
+    return yield Session.find({ $or: [{ lecturer: userId }, { participants: userId }] }).populate('lecturer participants stream chat').exec();
 }
 
 function* create(lecturerId, name) {
