@@ -14,11 +14,11 @@ function setup(server) {
         labels: ['chat']
     });
 
-    var users = {};
     var numUsers = 0;
 
     var io = require('socket.io')(server.select('chat').listener);
     io.on('connection', function (socket) {
+        var users = {};
         var addedUser = false;
 
         socket.on('new message', function (data, room) {
@@ -29,10 +29,12 @@ function setup(server) {
         });
 
         socket.on('add user', function (user, room) {
-            // we store the username in the socket session for this client
-            socket.join(room);
             socket.user = user;
             socket.room = room;
+
+            socket.join(room);
+
+            sendChatUsersList(io, socket, room);
             // add the client's username to the global list
             users[user] = user;
             ++numUsers;
@@ -62,4 +64,18 @@ function setup(server) {
             }
         });
     });
+}
+
+function sendChatUsersList(io, socket, room) {
+    var clients = io.sockets.adapter.rooms[room];
+
+    var users = new Array();
+    for (var clientId in clients) {
+        users.push(JSON.parse(io.sockets.connected[clientId].user));
+    }
+    if (users == null) {
+        return;
+    }
+
+    socket.emit('users list', { users: users });
 }

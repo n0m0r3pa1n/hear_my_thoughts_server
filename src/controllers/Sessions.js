@@ -60,6 +60,7 @@ export function leave(session, userId) {
 
 function* getUniqueShortId() {
     let shortId = ShortId.generate();
+    shortId = shortId.length > 5 ? shortId.substr(0, 3) : shortId;
     let session = yield Session.findOne({shortId: shortId}).exec();
     let isDuplicate = session != null
     if(isDuplicate !== false) {

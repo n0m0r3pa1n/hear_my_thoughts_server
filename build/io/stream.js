@@ -28,7 +28,6 @@ function setup(server) {
         });
 
         socket.on('stream status', function (data, room) {
-            console.log(data, room);
             io.to(room).emit('stream status', {
                 is_running: data
             });
