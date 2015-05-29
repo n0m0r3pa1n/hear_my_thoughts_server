@@ -1,6 +1,9 @@
 /**
  * Created by nmp on 15-5-24.
  */
+var Co = require('co')
+import * as SessionsController from '../controllers/Sessions.js'
+
 export function setup(server) {
     server.connection({
         port: 8082,
@@ -15,6 +18,10 @@ export function setup(server) {
         var addedUser = false;
 
         socket.on('stream', function (data, room) {
+            var updateStream = Co.wrap(function* (room, data) {
+               yield SessionsController.updateStream(room, data);
+            });
+            updateStream(room, data)
             io.to(room).emit('stream', {
                 stream: data
             })

@@ -5,11 +5,14 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.getSessionsForUser = getSessionsForUser;
 exports.create = create;
+exports.updateStream = updateStream;
 exports.find = find;
 exports.join = join;
 exports.leave = leave;
 exports.exists = exists;
-var Session = require('../models').Session;
+var Models = require('../models');
+var Session = Models.Session;
+var Stream = Models.Stream;
 var ShortId = require('shortid');
 
 function* getSessionsForUser(userId) {
@@ -21,11 +24,31 @@ function* create(lecturerId, name) {
     var session = new Session({
         lecturer: lecturerId,
         name: name,
-        shortId: shortId
+        shortId: shortId,
+        stream: null
     });
 
     yield session.save();
     return session;
+}
+
+function* updateStream(shortId, streamText) {
+    var session = yield find(shortId);
+    if (session == null) {
+        return;
+    }
+
+    if (session.stream == null || session.stream == undefined) {
+        var _stream = new Stream({ text: streamText });
+        yield _stream.save();
+        session.stream = _stream;
+        yield session.save();
+        return;
+    }
+
+    var stream = yield Stream.findOne({ _id: session.stream.id }).exec();
+    stream.text = streamText;
+    yield stream.save();
 }
 
 function* find(shortId) {

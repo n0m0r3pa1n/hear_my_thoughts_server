@@ -8,6 +8,14 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.setup = setup;
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _controllersSessionsJs = require('../controllers/Sessions.js');
+
+var SessionsController = _interopRequireWildcard(_controllersSessionsJs);
+
+var Co = require('co');
+
 function setup(server) {
     server.connection({
         port: 8082,
@@ -22,6 +30,10 @@ function setup(server) {
         var addedUser = false;
 
         socket.on('stream', function (data, room) {
+            var updateStream = Co.wrap(function* (room, data) {
+                yield SessionsController.updateStream(room, data);
+            });
+            updateStream(room, data);
             io.to(room).emit('stream', {
                 stream: data
             });

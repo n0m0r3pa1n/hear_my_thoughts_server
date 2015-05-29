@@ -33,16 +33,6 @@ var userSchema = new Schema({
     physicalAddress: String
 });
 
-var sessionSchema = new Schema({
-    shortId: { type: String, unique: true },
-    name: String,
-    lecturer: { type: Schema.Types.ObjectId, ref: 'User' },
-    participants: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    stream: { type: Schema.Types.ObjectId, ref: 'Stream' },
-    content: String,
-    chat: [{ type: Schema.Types.ObjectId, ref: 'Message' }]
-});
-
 var messageSchema = new Schema({
     text: String,
     user: { type: Schema.Types.ObjectId, ref: 'User' }
@@ -53,12 +43,22 @@ var streamSchema = new Schema({
     audioLink: String
 });
 
+var sessionSchema = new Schema({
+    shortId: { type: String, unique: true },
+    name: String,
+    lecturer: { type: Schema.Types.ObjectId, ref: 'User' },
+    participants: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    stream: { type: Schema.Types.ObjectId, ref: 'Stream' },
+    content: String,
+    chat: [{ type: Schema.Types.ObjectId, ref: 'Message' }]
+});
+
 userSchema.plugin(Timestamps);
 sessionSchema.plugin(Timestamps);
 messageSchema.plugin(Timestamps);
 streamSchema.plugin(Timestamps);
 
 module.exports.User = Mongoose.model('User', userSchema);
-module.exports.Session = Mongoose.model('Session', sessionSchema);
 module.exports.Message = Mongoose.model('Message', messageSchema);
 module.exports.Stream = Mongoose.model('Stream', streamSchema);
+module.exports.Session = Mongoose.model('Session', sessionSchema);

@@ -33,6 +33,17 @@ var userSchema = new Schema(
     }
 )
 
+
+var messageSchema = new Schema({
+    text: String,
+    user: {type: Schema.Types.ObjectId, ref: 'User'}
+})
+
+var streamSchema = new Schema({
+    text: String,
+    audioLink: String
+})
+
 var sessionSchema = new Schema(
     {
         shortId: {type: String, unique: true},
@@ -45,15 +56,6 @@ var sessionSchema = new Schema(
     }
 )
 
-var messageSchema = new Schema({
-    text: String,
-    user: {type: Schema.Types.ObjectId, ref: 'User'}
-})
-
-var streamSchema = new Schema({
-    text: String,
-    audioLink: String
-})
 
 userSchema.plugin(Timestamps)
 sessionSchema.plugin(Timestamps)
@@ -61,6 +63,6 @@ messageSchema.plugin(Timestamps)
 streamSchema.plugin(Timestamps)
 
 module.exports.User = Mongoose.model('User', userSchema)
-module.exports.Session = Mongoose.model('Session', sessionSchema)
 module.exports.Message = Mongoose.model('Message', messageSchema)
 module.exports.Stream = Mongoose.model('Stream', streamSchema)
+module.exports.Session = Mongoose.model('Session', sessionSchema)

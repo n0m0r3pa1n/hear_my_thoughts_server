@@ -1,4 +1,6 @@
-var Session = require('../models').Session
+var Models = require('../models')
+var Session = Models.Session
+var Stream = Models.Stream
 var ShortId = require('shortid')
 
 export function* getSessionsForUser(userId) {
@@ -10,11 +12,31 @@ export function* create(lecturerId, name) {
     let session = new Session({
         lecturer: lecturerId,
         name: name,
-        shortId: shortId
+        shortId: shortId,
+        stream: null
     })
 
     yield session.save();
     return session;
+}
+
+export function* updateStream(shortId, streamText) {
+    let session = yield find(shortId);
+    if(session == null) {
+        return;
+    }
+
+    if(session.stream == null || session.stream == undefined) {
+        let stream  = new Stream({text: streamText})
+        yield stream.save()
+        session.stream = stream;
+        yield session.save()
+        return;
+    }
+
+    let stream = yield Stream.findOne({_id: session.stream.id}).exec();
+    stream.text = streamText;
+    yield stream.save()
 }
 
 export function* find(shortId) {
