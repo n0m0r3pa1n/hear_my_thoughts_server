@@ -1,7 +1,10 @@
 var Models = require('../models')
 var Session = Models.Session
 var Stream = Models.Stream
+var Message = Models.Message
 var ShortId = require('shortid')
+
+import * as UsersController from './Users.js'
 
 export function* getSessionsForUser(userId) {
     return yield Session.find({$or: [{lecturer: userId}, {participants: userId}]}).populate('lecturer participants stream chat').exec()
@@ -40,7 +43,46 @@ export function* updateStream(shortId, streamText) {
 }
 
 export function* find(shortId) {
-    return yield Session.findOne({shortId: shortId}).populate('participants stream').exec();
+    return yield Session.findOne({shortId: shortId}).populate('participants stream chat').exec();
+}
+
+export function* getChatMessages(shortId) {
+    let session = yield find(shortId);
+    if(session == null) {
+        return null;
+    }
+
+    let newChat = []
+    for(let message of session.chat) {
+        message = yield Message.findOne(message).populate('user').exec()
+        newChat.push(message)
+    }
+
+    return newChat;
+}
+
+export function* saveChatMessage(shortId, userId, message) {
+    let session = yield find(shortId);
+    if(session == null) {
+        return;
+    }
+
+    let user = yield UsersController.getById(userId.toString());
+    if(user == null)
+        return;
+
+    if(session.chat == null || session.chat == undefined || session.chat.length <= 0) {
+        session.chat = []
+    }
+    var message = new Message({
+        user: user,
+        text: message
+    })
+
+    yield message.save();
+
+    session.chat.push(message)
+    yield session.save()
 }
 
 export function join(session, user) {

@@ -8,6 +8,14 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.setup = setup;
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _controllersSessionsJs = require('../controllers/Sessions.js');
+
+var SessionsController = _interopRequireWildcard(_controllersSessionsJs);
+
+var Co = require('co');
+
 function setup(server) {
     server.connection({
         port: 8081,
@@ -20,13 +28,6 @@ function setup(server) {
     io.on('connection', function (socket) {
         var users = {};
         var addedUser = false;
-
-        socket.on('new message', function (data, room) {
-            io.to(room).emit('new message', {
-                message: data,
-                user: socket.user
-            });
-        });
 
         socket.on('add user', function (user, room) {
             socket.user = user;
@@ -46,6 +47,17 @@ function setup(server) {
             socket.broadcast.emit('user joined', {
                 user: socket.user,
                 numUsers: numUsers
+            });
+        });
+
+        socket.on('new message', function (data, room, userId) {
+            var updateStream = Co.wrap(function* (room, data, userId) {
+                yield SessionsController.saveChatMessage(room, userId, data);
+            });
+            updateStream(room, data, userId);
+            io.to(room).emit('new message', {
+                message: data,
+                user: socket.user
             });
         });
 

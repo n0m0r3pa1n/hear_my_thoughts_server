@@ -7,12 +7,22 @@ exports.getSessionsForUser = getSessionsForUser;
 exports.create = create;
 exports.updateStream = updateStream;
 exports.find = find;
+exports.getChatMessages = getChatMessages;
+exports.saveChatMessage = saveChatMessage;
 exports.join = join;
 exports.leave = leave;
 exports.exists = exists;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _UsersJs = require('./Users.js');
+
+var UsersController = _interopRequireWildcard(_UsersJs);
+
 var Models = require('../models');
 var Session = Models.Session;
 var Stream = Models.Stream;
+var Message = Models.Message;
 var ShortId = require('shortid');
 
 function* getSessionsForUser(userId) {
@@ -52,7 +62,66 @@ function* updateStream(shortId, streamText) {
 }
 
 function* find(shortId) {
-    return yield Session.findOne({ shortId: shortId }).populate('participants stream').exec();
+    return yield Session.findOne({ shortId: shortId }).populate('participants stream chat').exec();
+}
+
+function* getChatMessages(shortId) {
+    var session = yield find(shortId);
+    if (session == null) {
+        return null;
+    }
+
+    var newChat = [];
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = session.chat[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var message = _step.value;
+
+            message = yield Message.findOne(message).populate('user').exec();
+            newChat.push(message);
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator['return']) {
+                _iterator['return']();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    return newChat;
+}
+
+function* saveChatMessage(shortId, userId, message) {
+    var session = yield find(shortId);
+    if (session == null) {
+        return;
+    }
+
+    var user = yield UsersController.getById(userId.toString());
+    if (user == null) return;
+
+    if (session.chat == null || session.chat == undefined || session.chat.length <= 0) {
+        session.chat = [];
+    }
+    var message = new Message({
+        user: user,
+        text: message
+    });
+
+    yield message.save();
+
+    session.chat.push(message);
+    yield session.save();
 }
 
 function join(session, user) {

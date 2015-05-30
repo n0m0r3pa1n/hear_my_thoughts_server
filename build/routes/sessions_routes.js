@@ -29,7 +29,29 @@ exports['default'] = [{
             params: {
                 shortId: Joi.string().required()
             }
+        },
+        description: 'Let a user join a session',
+        tags: ['api']
+    }
+}, {
+    method: 'GET',
+    path: '/sessions/{shortId}/chat',
+    handler: function* handler(req, reply) {
+        var messages = yield SessionsController.getChatMessages(req.params.shortId);
+        if (messages === null) {
+            reply(Boom.notFound('Wrong session code!'));
         }
+
+        reply({ messages: messages });
+    },
+    config: {
+        validate: {
+            params: {
+                shortId: Joi.string().required()
+            }
+        },
+        description: 'Get chat messages for user',
+        tags: ['api']
     }
 }, {
     method: 'GET',
@@ -47,7 +69,9 @@ exports['default'] = [{
             params: {
                 shortId: Joi.string().required()
             }
-        }
+        },
+        description: 'Let a user leave a session',
+        tags: ['api']
     }
 }, {
     method: 'POST',
@@ -61,7 +85,9 @@ exports['default'] = [{
             payload: {
                 name: Joi.string().required()
             }
-        }
+        },
+        description: 'Create a session',
+        tags: ['api']
     }
 }];
 module.exports = exports['default'];

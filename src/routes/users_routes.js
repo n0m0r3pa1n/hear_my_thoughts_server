@@ -25,7 +25,7 @@ export default [
                 },
             },
             auth: false,
-            description: 'Test',
+            description: 'Get a user by email',
             tags: ['api']
         }
     },
@@ -51,7 +51,7 @@ export default [
                 }
             },
             auth: false,
-            description: 'Returns token when the user is successfully created!',
+            description: 'Get token when the user is successfully created!',
             tags: ['api']
         }
     },
@@ -63,7 +63,7 @@ export default [
             reply({sessions: sessions});
         },
         config: {
-            description: 'Test',
+            description: 'Get sessions for user',
             tags: ['api']
         }
     }

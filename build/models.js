@@ -3,6 +3,7 @@
 var Mongoose = require('mongoose');
 var Schema = Mongoose.Schema;
 var Timestamps = require('mongoose-timestamp');
+var DeepPopulate = require('mongoose-deep-populate');
 var Co = require('co');
 Timestamps = require('mongoose-timestamp');
 
@@ -57,6 +58,7 @@ userSchema.plugin(Timestamps);
 sessionSchema.plugin(Timestamps);
 messageSchema.plugin(Timestamps);
 streamSchema.plugin(Timestamps);
+sessionSchema.plugin(DeepPopulate);
 
 module.exports.User = Mongoose.model('User', userSchema);
 module.exports.Message = Mongoose.model('Message', messageSchema);

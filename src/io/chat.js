@@ -1,6 +1,9 @@
 /**
  * Created by nmp on 15-5-24.
  */
+var Co = require('co')
+import * as SessionsController from '../controllers/Sessions.js'
+
 export function setup(server) {
     server.connection({
         port: 8081,
@@ -14,13 +17,6 @@ export function setup(server) {
     io.on('connection', function (socket) {
         var users = {};
         var addedUser = false;
-
-        socket.on('new message', function (data, room) {
-            io.to(room).emit('new message', {
-                message: data,
-                user: socket.user
-            })
-        })
 
         socket.on('add user', function (user, room) {
             socket.user = user;
@@ -42,6 +38,17 @@ export function setup(server) {
                 numUsers: numUsers
             });
         });
+
+        socket.on('new message', function (data, room, userId) {
+            var updateStream = Co.wrap(function* (room, data, userId) {
+                yield SessionsController.saveChatMessage(room, userId, data);
+            });
+            updateStream(room, data, userId)
+            io.to(room).emit('new message', {
+                message: data,
+                user: socket.user
+            })
+        })
 
         socket.on('disconnect', function () {
             // remove the username from global usernames list
