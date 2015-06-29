@@ -162,7 +162,7 @@ function leave(session, userId) {
 
 function* getUniqueShortId() {
     var shortId = ShortId.generate();
-    shortId = shortId.length > 5 ? shortId.substr(0, 3) : shortId;
+    shortId = shortId.length > 5 ? shortId.substr(0, 6) : shortId;
     var session = yield Session.findOne({ shortId: shortId }).exec();
     var isDuplicate = session != null;
     if (isDuplicate !== false) {
