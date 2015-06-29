@@ -1,6 +1,6 @@
 var User = require('../models').User
 
-export function *get(email) {
+export function* get(email) {
     return yield User.findOne({email: email}).exec()
 }
 
