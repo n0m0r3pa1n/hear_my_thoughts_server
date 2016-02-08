@@ -70,7 +70,7 @@ export function setup(server) {
 }
 
 function sendChatUsersList(io, socket, room) {
-    var clients = io.sockets.adapter.rooms[room];
+    var clients = io.sockets.adapter.rooms[room].sockets;
 
     var users = new Array()
     for (var clientId in clients) {

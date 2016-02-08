@@ -36,6 +36,7 @@ export default [
             let user = yield UsersController.create(req.payload.email, req.payload.name);
             if (user != null && user != undefined) {
                 reply({
+                    _id: user.id,
                     token: AuthController.generateToken(user.id),
                     name: user.name,
                     email: user.email

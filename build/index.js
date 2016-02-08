@@ -33,7 +33,7 @@ var serverPort = process.env.PORT || 8080;
 
 var pack = require('../package'),
     swaggerOptions = {
-    basePath: dbURI.contains('localhost') ? 'http://localhost:' + serverPort : '',
+    basePath: dbURI.indexOf('localhost') > -1 ? 'http://localhost:' + serverPort : '',
     apiVersion: pack.version
 };
 
