@@ -51,7 +51,7 @@ var apiServer = server.select('api');
 var wsServer = server.select('ws');
 
 Chat.setup(wsServer);
-Stream.setup(wsServer);
+//Stream.setup(wsServer)
 
 apiServer.register({
     register: require('hapi-swagger'),
