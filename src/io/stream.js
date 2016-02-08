@@ -5,16 +5,17 @@ var Co = require('co')
 import * as SessionsController from '../controllers/Sessions.js'
 
 export function setup(server) {
-    server.connection({
-        port: 8082,
-        labels: ['stream']
-    })
+    //server.connection({
+    //    port: 8082,
+    //    labels: ['stream']
+    //})
 
     var users = {};
     var numUsers = 0;
 
-    var io = require('socket.io')(server.select('stream').listener)
-    io.on('connection', function (socket) {
+    var io = require('socket.io')(server.listener)
+    var nsp = io.of('/stream');
+    nsp.on('connection', function (socket) {
         var addedUser = false;
 
         socket.on('stream', function (data, room) {
@@ -22,13 +23,13 @@ export function setup(server) {
                yield SessionsController.updateStream(room, data);
             });
             updateStream(room, data)
-            io.to(room).emit('stream', {
+            nsp.to(room).emit('stream', {
                 stream: data
             })
         })
 
         socket.on('stream status', function(data, room) {
-            io.to(room).emit('stream status', {
+            nsp.to(room).emit('stream status', {
                 is_running: data
             })
         })
