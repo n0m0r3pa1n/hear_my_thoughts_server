@@ -23,12 +23,20 @@ var server = new Hapi.Server()
 
 server.connection({
     port: serverPort,
+    labels: ['api', 'ws'],
     routes: {
         cors: true
     }
 })
 
-server.register({
+
+var apiServer = server.select('api')
+var wsServer = server.select('ws')
+
+Chat.setup(wsServer)
+Stream.setup(wsServer)
+
+apiServer.register({
     register: require('hapi-swagger'),
     options: swaggerOptions
 }, function (err) {
@@ -39,7 +47,7 @@ server.register({
     }
 });
 
-server.register(require('hapi-auth-jwt2'), function (err) {
+apiServer.register(require('hapi-auth-jwt2'), function (err) {
 
     if (err) {
         console.log(err);
@@ -52,14 +60,13 @@ server.register(require('hapi-auth-jwt2'), function (err) {
         });
 });
 
-Chat.setup(server)
-Stream.setup(server)
+
 
 routes.forEach(function(route) {
     route.handler = Co.wrap(route.handler)
 })
 
-server.route(routes)
+apiServer.route(routes)
 
 if (!module.parent) {
     server.start(function() {

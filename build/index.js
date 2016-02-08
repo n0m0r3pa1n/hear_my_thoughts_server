@@ -18,7 +18,7 @@ var Stream = _interopRequireWildcard(_ioStreamJs);
 
 var _configJs = require('./config.js');
 
-var _routesJs = require('./routes.js');
+var _routesJs = require("./routes.js");
 
 var _routesJs2 = _interopRequireDefault(_routesJs);
 
@@ -41,12 +41,19 @@ var server = new Hapi.Server();
 
 server.connection({
     port: serverPort,
+    labels: ['api', 'ws'],
     routes: {
         cors: true
     }
 });
 
-server.register({
+var apiServer = server.select('api');
+var wsServer = server.select('ws');
+
+Chat.setup(wsServer);
+Stream.setup(wsServer);
+
+apiServer.register({
     register: require('hapi-swagger'),
     options: swaggerOptions
 }, function (err) {
@@ -57,7 +64,7 @@ server.register({
     }
 });
 
-server.register(require('hapi-auth-jwt2'), function (err) {
+apiServer.register(require('hapi-auth-jwt2'), function (err) {
 
     if (err) {
         console.log(err);
@@ -69,14 +76,11 @@ server.register(require('hapi-auth-jwt2'), function (err) {
     });
 });
 
-Chat.setup(server);
-Stream.setup(server);
-
 _routesJs2['default'].forEach(function (route) {
     route.handler = Co.wrap(route.handler);
 });
 
-server.route(_routesJs2['default']);
+apiServer.route(_routesJs2['default']);
 
 if (!module.parent) {
     server.start(function () {

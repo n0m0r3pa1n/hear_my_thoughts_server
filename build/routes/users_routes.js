@@ -24,12 +24,12 @@ var Boom = require('boom');
 var Joi = require('joi');
 
 exports['default'] = [{
-    method: 'GET',
-    path: '/users/{email}',
+    method: "GET",
+    path: "/users/{email}",
     handler: function* handler(req, reply) {
         var user = yield UsersController.get(req.params.email);
         if (!user) {
-            reply(Boom.notFound('User not found!'));
+            reply(Boom.notFound("User not found!"));
         }
 
         reply(AuthController.getToken(user.id));
@@ -38,14 +38,15 @@ exports['default'] = [{
         validate: {
             params: {
                 email: Joi.string().required()
-            } },
+            }
+        },
         auth: false,
         description: 'Get a user by email',
         tags: ['api']
     }
 }, {
-    method: 'POST',
-    path: '/users',
+    method: "POST",
+    path: "/users",
     handler: function* handler(req, reply) {
         var user = yield UsersController.create(req.payload.email, req.payload.name);
         if (user != null && user != undefined) {
@@ -56,7 +57,7 @@ exports['default'] = [{
                 email: user.email
             });
         }
-        reply(Boom.notFound('User not found!'));
+        reply(Boom.notFound("User not found!"));
     },
     config: {
         validate: {
@@ -70,8 +71,8 @@ exports['default'] = [{
         tags: ['api']
     }
 }, {
-    method: 'GET',
-    path: '/user/sessions',
+    method: "GET",
+    path: "/user/sessions",
     handler: function* handler(req, reply) {
         var sessions = yield SessionsController.getSessionsForUser(req.auth.credentials._id);
         reply({ sessions: sessions });

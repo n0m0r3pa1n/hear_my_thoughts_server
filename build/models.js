@@ -4,7 +4,7 @@ var Mongoose = require('mongoose');
 var Schema = Mongoose.Schema;
 var Timestamps = require('mongoose-timestamp');
 var DeepPopulate = require('mongoose-deep-populate');
-var Co = require('co');
+var Co = require("co");
 Timestamps = require('mongoose-timestamp');
 
 Mongoose.plugin(function (schema) {

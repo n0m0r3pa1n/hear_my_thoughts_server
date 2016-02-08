@@ -17,15 +17,16 @@ var SessionsController = _interopRequireWildcard(_controllersSessionsJs);
 var Co = require('co');
 
 function setup(server) {
-    server.connection({
-        port: 8081,
-        labels: ['chat']
-    });
+    //server.connection({
+    //    port: 8081,
+    //    labels: ['chat']
+    //})
 
     var numUsers = 0;
 
-    var io = require('socket.io')(server.select('chat').listener);
-    io.on('connection', function (socket) {
+    var io = require('socket.io')(server.listener);
+    var nsp = io.of('/chat');
+    nsp.on('connection', function (socket) {
         var users = {};
         var addedUser = false;
 
@@ -55,7 +56,7 @@ function setup(server) {
                 yield SessionsController.saveChatMessage(room, userId, data);
             });
             updateStream(room, data, userId);
-            io.to(room).emit('new message', {
+            nsp.to(room).emit('new message', {
                 message: data,
                 user: socket.user
             });
@@ -79,13 +80,13 @@ function setup(server) {
 }
 
 function sendChatUsersList(io, socket, room) {
-    var clients = io.sockets.adapter.rooms[room].sockets;
+    var clients = io.nsps['/chat'].adapter.rooms[room].sockets;
 
     var users = new Array();
     for (var clientId in clients) {
-        users.push(JSON.parse(io.sockets.connected[clientId].user));
+        users.push(JSON.parse(io.nsps['/chat'].sockets[clientId].user));
     }
-    if (users == null) {
+    if (users == null || users.length == 0) {
         return;
     }
 

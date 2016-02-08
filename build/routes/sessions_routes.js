@@ -19,7 +19,7 @@ exports['default'] = [{
     handler: function* handler(req, reply) {
         var session = yield SessionsController.find(req.params.shortId);
         if (session === null) {
-            reply(Boom.notFound('Wrong session code!'));
+            reply(Boom.notFound("Wrong session code!"));
         }
         SessionsController.join(session, req.auth.credentials);
         reply(session);
@@ -39,7 +39,7 @@ exports['default'] = [{
     handler: function* handler(req, reply) {
         var messages = yield SessionsController.getChatMessages(req.params.shortId);
         if (messages === null) {
-            reply(Boom.notFound('Wrong session code!'));
+            reply(Boom.notFound("Wrong session code!"));
         }
 
         reply({ messages: messages });
@@ -59,7 +59,7 @@ exports['default'] = [{
     handler: function* handler(req, reply) {
         var session = yield SessionsController.find(req.params.shortId);
         if (session == null) {
-            reply(Boom.notFound('Wrong session code!'));
+            reply(Boom.notFound("Wrong session code!"));
         }
         SessionsController.leave(session, req.auth.credentials._id);
         reply(session);
