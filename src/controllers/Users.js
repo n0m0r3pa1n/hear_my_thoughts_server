@@ -4,8 +4,8 @@ export function* get(email) {
     return yield User.findOne({email: email}).exec()
 }
 
-export function* create(email, name) {
-    return yield User.findOneOrCreate({email: email}, {email: email, name: name})
+export function* create(email, name, profilePicture) {
+    return yield User.findOneOrCreate({email: email}, {email: email, name: name, profilePicture: profilePicture})
 }
 
 export function* exists(userId) {

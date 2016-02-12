@@ -30,7 +30,8 @@ var userSchema = new Schema(
     {
         name: String,
         email: {type: String, required: true},
-        physicalAddress: String
+        physicalAddress: String,
+        profilePicture: String
     }
 )
 

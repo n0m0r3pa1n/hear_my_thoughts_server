@@ -33,13 +33,14 @@ export default [
         method: "POST",
         path: "/users",
         handler: function*(req,reply) {
-            let user = yield UsersController.create(req.payload.email, req.payload.name);
+            let user = yield UsersController.create(req.payload.email, req.payload.name, req.payload.profilePicture);
             if (user != null && user != undefined) {
                 reply({
                     _id: user.id,
                     token: AuthController.generateToken(user.id),
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    profilePicture: user.profilePicture
                 })
             }
             reply(Boom.notFound("User not found!"))
@@ -48,7 +49,8 @@ export default [
             validate: {
                 payload: {
                     name: Joi.string().required(),
-                    email: Joi.string().email().required()
+                    email: Joi.string().email().required(),
+                    profilePicture: Joi.string().email().optional()
                 }
             },
             auth: false,
