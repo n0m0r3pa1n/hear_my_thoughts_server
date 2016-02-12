@@ -50,7 +50,7 @@ export default [
                 payload: {
                     name: Joi.string().required(),
                     email: Joi.string().email().required(),
-                    profilePicture: Joi.string().email().optional()
+                    profilePicture: Joi.string().optional()
                 }
             },
             auth: false,
